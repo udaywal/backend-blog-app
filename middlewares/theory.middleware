@@ -1,0 +1,25 @@
+Middleware function can be used for...
+
+    1. Modify the request and response object
+    2. End of request and response cycle
+    3. Calling the next middleware or controller using next() method.
+        next() method basically allows to execute other middlewares
+
+Middleware basically works between req and res. 
+So let's say you get the request and you want to change it then through middleware you can change it and 
+then process the req which will provide the response.
+
+>> Types of middlewares
+
+1. **Application level middlewares** - we use it a lot!
+2. **Router level middlewares**
+3. **Error handling middlewares**
+4. **Built-in middlewares**
+5. **Third Party middlewares** - like body-parser, cookie-parser
+
+>> Important points of middlewares
+    If you are using a middleware, it runs on every request client make. 
+    So if you want to run them for a specific type of requests remember 
+        "where you are using" and "how you are using" middlewares.
+        =
+        Order of middlewares are so important.
