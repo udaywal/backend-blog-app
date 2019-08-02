@@ -16,6 +16,21 @@ app.listen(appConfig.port, ()=>{
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+app.all('*', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+    next();
+});
+
+//Bootstrap models
+const modelsPath = './app/models';
+fs.readdirSync(modelsPath).forEach(function (file) {
+  if (~file.indexOf('.js')) { 
+    require(modelsPath + '/' + file);
+  }
+});
+
 // Bootstrap route
 let routesPath = './routes';
 fs.readdirSync(routesPath).forEach(function (file) {

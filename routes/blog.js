@@ -3,11 +3,7 @@ const express = require('express')
 const apiConfig = require('../config/appConfig')
 const blogController = require('../controllers/blogController')
 
-const cors = require('cors')
-
 let setRouter = (app) => {
-
-	app.use(cors());
 
     let baseUrl = apiConfig.apiVersion + '/blogs';
 
