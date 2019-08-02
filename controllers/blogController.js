@@ -83,18 +83,18 @@ let createBlog = (req, res) => {
 let editBlog = (req, res) => {
 
     let options = req.body;
-    UserModel.update({ 'userId': req.params.userId }, options, ((err, result) => {
+    BlogModel.update({ 'userId': req.params.userId }, options, ((err, result) => {
         if (err) {
-            logger.error('Failed to update blog!', 'editBlog > update()', 5)
-            let apiResponse = response.generate(true, 'Failed To edit user details', 500, err)
+            loggerLib.error('Failed to update blog!', 'editBlog > update()', 5)
+            let apiResponse = responseLib.generate(true, 'Failed To edit user details', 500, err)
             res.send(apiResponse)
         } else if (result == undefined || result == null || result == '') {
-            logger.error('No blog Found', 'editBlog > update()', 3)
-            let apiResponse = response.generate(true, 'No blog Found', 404, null)
+            loggerLib.error('No blog Found', 'editBlog > update()', 3)
+            let apiResponse = responseLib.generate(true, 'No blog Found', 404, null)
             res.send(apiResponse)
         } else {
-            logger.info('Blog details updated!', 'editBlog > update()', 1)
-            let apiResponse = response.generate(false, 'Blog details updated!', 200, result)
+            loggerLib.info('Blog details updated!', 'editBlog > update()', 1)
+            let apiResponse = responseLib.generate(false, 'Blog details updated!', 200, result)
             res.send(apiResponse)
         }
     })
@@ -106,16 +106,16 @@ let deleteBlog = (req, res) => {
 
     BlogModel.remove({ blogId: req.params.blogId }, (err, result) => {
         if (err) {
-            logger.error('Failed to delete blog!', 'deleteBlog > remove()', 5)
-            let apiResponse = response.generate(true, 'Failed To delete blog!', 500, err)
+            loggerLib.error('Failed to delete blog!', 'deleteBlog > remove()', 5)
+            let apiResponse = responseLib.generate(true, 'Failed To delete blog!', 500, err)
             res.send(apiResponse)
         } else if (result == undefined || result == null || result == '') {
-            logger.error('No blog Found', 'deleteBlog > remove()', 3)
-            let apiResponse = response.generate(true, 'No blog Found', 404, null)
+            loggerLib.error('No blog Found', 'deleteBlog > remove()', 3)
+            let apiResponse = responseLib.generate(true, 'No blog Found', 404, null)
             res.send(apiResponse)
         } else {
-            logger.info('Blog deleted successfully!', 'deleteBlog > remove()', 1)
-            let apiResponse = response.generate(false, 'Blog deleted successfully!', 200, result)
+            loggerLib.info('Blog deleted successfully!', 'deleteBlog > remove()', 1)
+            let apiResponse = responseLib.generate(false, 'Blog deleted successfully!', 200, result)
             res.send(apiResponse)
         }
     })
