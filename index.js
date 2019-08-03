@@ -1,38 +1,30 @@
 const express = require('express');
-const mongoose = require('mongoose');
-
-const bodyParser = require('body-parser')
-const fs = require('fs')
-
+const path = require('path');
+const cookieParser =require('cookie-parser');
+const bodyParser = require('body-parser');
+const fs = require('fs');
 const app = express();
-
-const path = require('path')
 const http = require('http');
-
-const appConfig = require('./config/appConfig')
+const appConfig = require('./config/appConfig');
+const logger = require('./libs/loggerLib');
 const routeLoggerMiddleware = require('./middlewares/routeLogger');
 const globalErrorMiddleware = require('./middlewares/appErrorHandler');
-const logger = require('./libs/loggerLib')
+const mongoose = require('mongoose');
+const morgan = require('morgan');
 
-/* app.listen(appConfig.port, ()=>{
-    console.log(`Server Created Successfully! Listen on port ${appConfig.port}`)
-    mongoose.connect(appConfig.db.uri, { useNewUrlParser: true })
-}) */
-
-const server = http.createServer(app);
-// start listening to http server
-console.log(appConfig);
-server.listen(appConfig.port);
-server.on('error', onError);
-server.on('listening', onListening);
+app.use(morgan('dev'));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(routeLoggerMiddleware.logIp);
+app.use(globalErrorMiddleware.globalErrorHandler);
 
 app.use(express.static(path.join(__dirname, 'client')));
 
-app.use(routeLoggerMiddleware.logIp);
-app.use(globalErrorMiddleware.globalErrorHandler);
+const modelsPath = './models';
+const routesPath = './routes';
 
 app.all('*', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -42,7 +34,6 @@ app.all('*', function(req, res, next) {
 });
 
 //Bootstrap models
-const modelsPath = './models';
 fs.readdirSync(modelsPath).forEach(function (file) {
   if (~file.indexOf('.js')) { 
     require(modelsPath + '/' + file);
@@ -50,7 +41,6 @@ fs.readdirSync(modelsPath).forEach(function (file) {
 });
 
 // Bootstrap route
-let routesPath = './routes';
 fs.readdirSync(routesPath).forEach(function (file) {
     if (~file.indexOf('.js')) {
         let route = require(routesPath + '/' + file);
@@ -59,6 +49,14 @@ fs.readdirSync(routesPath).forEach(function (file) {
 });
 
 app.use(globalErrorMiddleware.globalNotFoundHandler);
+
+
+const server = http.createServer(app);
+// start listening to http server
+console.log(appConfig);
+server.listen(appConfig.port);
+server.on('error', onError);
+server.on('listening', onListening);
 
 /* Event listener for HTTP server "error" event. */
 
@@ -112,7 +110,11 @@ mongoose.connection.on('open', function (err) {
     if (err) {
         console.log("database error");
         console.log(err);
+        logger.error(err, 'mongoose connection open handler', 10);
     } else {
         console.log("database connection open success");
+        logger.info("database connection open",'database connection open handler', 10);
     }
 });
+
+module.exports = app;
